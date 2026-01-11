@@ -3,138 +3,648 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rigged Web Spinner</title>
+    <title>Custom Value Spinner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; background: #f0f2f5; height: 100vh; margin: 0; padding-top: 50px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
         
-        /* About Button (Top Right) */
-        #about-btn { position: absolute; top: 10px; right: 10px; padding: 5px 10px; font-size: 12px; cursor: pointer; opacity: 0.6; }
-        #about-btn:hover { opacity: 1; }
-
-        .container { text-align: center; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
         
-        #canvas { margin: 20px 0; border: 5px solid #333; border-radius: 50%; }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
         
-        .controls { margin-bottom: 20px; }
-        input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        button { padding: 8px 15px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
-        button:hover { background: #0056b3; }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            position: relative;
+        }
         
-        #spin-btn { font-size: 1.2rem; padding: 10px 30px; background: #28a745; margin-top: 10px; }
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
         
-        /* The Pointer Arrow */
-        .pointer { width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid red; position: relative; margin-bottom: -15px; z-index: 10; }
+        .subtitle {
+            color: #a0a0c0;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .about-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .about-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+        
+        .input-section {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .input-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: #feb47b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .input-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .input-group input {
+            flex: 1;
+            padding: 14px 16px;
+            border: none;
+            border-radius: 10px 0 0 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .input-group button {
+            padding: 14px 20px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            border: none;
+            color: white;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .input-group button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        .values-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .values-list ul {
+            list-style-type: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .value-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        
+        .value-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .value-item.selected {
+            background: rgba(255, 190, 123, 0.3);
+            border: 1px solid #feb47b;
+        }
+        
+        .value-item .remove-btn {
+            background: none;
+            border: none;
+            color: #ff7e5f;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .controls button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #spinBtn {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: white;
+        }
+        
+        #spinBtn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+        
+        #clearBtn {
+            background: rgba(255, 126, 95, 0.2);
+            color: #ff7e5f;
+            border: 1px solid rgba(255, 126, 95, 0.4);
+        }
+        
+        #clearBtn:hover {
+            background: rgba(255, 126, 95, 0.3);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .spinner-section {
+            flex: 1;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .spinner-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto 30px;
+        }
+        
+        .spinner-wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.05), 
+                        0 0 30px rgba(0, 0, 0, 0.5);
+            transition: transform 5s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+        
+        .spinner-section-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 0%;
+        }
+        
+        .spinner-pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 60px;
+            z-index: 10;
+        }
+        
+        .spinner-pointer:before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #ff7e5f;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3));
+        }
+        
+        .result-section {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-section h2 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #4facfe;
+        }
+        
+        #result {
+            font-size: 2.5rem;
+            font-weight: bold;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #feb47b;
+            text-shadow: 0 2px 10px rgba(254, 180, 123, 0.3);
+        }
+        
+        .selection-info {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: #a0a0c0;
+            min-height: 24px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-header h2 {
+            color: #feb47b;
+            font-size: 1.8rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-values {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .modal-value-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 12px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-value-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+        
+        .modal-value-item.selected {
+            background: rgba(255, 190, 123, 0.3);
+            border: 1px solid #feb47b;
+        }
+        
+        .modal-instructions {
+            color: #a0a0c0;
+            line-height: 1.6;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .input-section, .spinner-section {
+                max-width: 100%;
+            }
+            
+            .spinner-container {
+                width: 350px;
+                height: 350px;
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .spinner-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
-
-    <button id="about-btn">About</button>
-
     <div class="container">
-        <h2>Custom Spinner</h2>
-        <div class="controls">
-            <input type="text" id="item-input" placeholder="Add value (e.g. Pizza)">
-            <button onclick="addItem()">Add</button>
-        </div>
+        <header>
+            <h1><i class="fas fa-dharmachakra"></i> Value Spinner</h1>
+            <p class="subtitle">Add custom values to the spinner, select one to always land on, then spin!</p>
+            <button class="about-btn" id="aboutBtn">
+                <i class="fas fa-info-circle"></i>
+            </button>
+        </header>
         
-        <div class="pointer"></div>
-        <canvas id="canvas" width="400" height="400"></canvas>
-        <br>
-        <button id="spin-btn" onclick="spinWheel()">SPIN!</button>
-        <p id="result-text"></p>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const aboutBtn = document.getElementById('about-btn');
-        
-        let items = ["Yes", "No", "Maybe"];
-        let currentRotation = 0;
-        let riggedTarget = null;
-
-        function drawWheel() {
-            const size = canvas.width;
-            const center = size / 2;
-            const radius = center - 10;
-            const sliceAngle = (2 * Math.PI) / items.length;
-
-            ctx.clearRect(0, 0, size, size);
-
-            items.forEach((item, i) => {
-                const angle = i * sliceAngle;
+        <div class="main-content">
+            <div class="input-section">
+                <h2><i class="fas fa-plus-circle"></i> Add Values</h2>
+                <div class="input-group">
+                    <input type="text" id="valueInput" placeholder="Enter a value to add to the spinner...">
+                    <button id="addBtn">Add</button>
+                </div>
                 
-                // Draw Slice
-                ctx.beginPath();
-                ctx.fillStyle = `hsl(${(i * 360) / items.length}, 70%, 60%)`;
-                ctx.moveTo(center, center);
-                ctx.arc(center, center, radius, angle, angle + sliceAngle);
-                ctx.fill();
-                ctx.stroke();
-
-                // Draw Text
-                ctx.save();
-                ctx.translate(center, center);
-                ctx.rotate(angle + sliceAngle / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = "white";
-                ctx.font = "bold 16px sans-serif";
-                ctx.fillText(item, radius - 20, 5);
-                ctx.restore();
-            });
+                <div class="values-list">
+                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Values in Spinner:</h3>
+                    <ul id="valuesContainer">
+                        <!-- Values will appear here -->
+                    </ul>
+                </div>
+                
+                <div class="controls">
+                    <button id="spinBtn">Spin the Wheel!</button>
+                    <button id="clearBtn">Clear All Values</button>
+                </div>
+            </div>
+            
+            <div class="spinner-section">
+                <div class="spinner-container">
+                    <div class="spinner-wheel" id="spinnerWheel">
+                        <!-- Spinner segments will be generated here -->
+                    </div>
+                    <div class="spinner-pointer"></div>
+                </div>
+                
+                <div class="result-section">
+                    <h2><i class="fas fa-trophy"></i> Result</h2>
+                    <div id="result">Add values and spin!</div>
+                    <div class="selection-info" id="selectionInfo">
+                        <!-- Selection info will appear here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Select Value to Land On</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <p>Select a value below. The spinner will always stop on your selected value.</p>
+            
+            <div class="modal-values" id="modalValues">
+                <!-- Values for selection will appear here -->
+            </div>
+            
+            <div class="selection-info">
+                <strong>Currently selected:</strong> <span id="currentSelection">None</span>
+            </div>
+            
+            <div class="modal-instructions">
+                <p><i class="fas fa-lightbulb"></i> <strong>How it works:</strong></p>
+                <ol style="margin-top: 10px; padding-left: 20px;">
+                    <li>Add values to the spinner using the input field</li>
+                    <li>Click the "About" button to open this selection panel</li>
+                    <li>Select a value you want the spinner to always land on</li>
+                    <li>Spin the wheel and watch it stop on your selected value</li>
+                    <li>Use the clear button to reset everything</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const valueInput = document.getElementById('valueInput');
+        const addBtn = document.getElementById('addBtn');
+        const valuesContainer = document.getElementById('valuesContainer');
+        const spinnerWheel = document.getElementById('spinnerWheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultDiv = document.getElementById('result');
+        const selectionInfo = document.getElementById('selectionInfo');
+        const aboutBtn = document.getElementById('aboutBtn');
+        const aboutModal = document.getElementById('aboutModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalValues = document.getElementById('modalValues');
+        const currentSelectionSpan = document.getElementById('currentSelection');
+        
+        // Application state
+        let values = [];
+        let selectedValue = null;
+        let isSpinning = false;
+        
+        // Color palette for spinner segments
+        const colors = [
+            '#FF6B6B', '#4ECDC4', '#FFD166', '#06D6A0', 
+            '#118AB2', '#073B4C', '#EF476F', '#7209B7',
+            '#3A86FF', '#FB5607', '#8338EC', '#FF006E'
+        ];
+        
+        // Initialize with some default values if empty
+        if (values.length === 0) {
+            const defaults = ['Pizza', 'Burger', 'Sushi', 'Tacos', 'Pasta', 'Salad', 'Steak', 'Ice Cream'];
+            defaults.forEach(val => addValue(val));
         }
-
-        function addItem() {
-            const input = document.getElementById('item-input');
-            if (input.value.trim()) {
-                items.push(input.value.trim());
-                input.value = "";
-                drawWheel();
-            }
-        }
-
-        // The "Secret" Menu
-        aboutBtn.addEventListener('click', () => {
-            const list = items.map((item, index) => `${index}: ${item}`).join("\n");
-            const choice = prompt(`Select the winning index (0 to ${items.length - 1}):\n\n${list}`);
-            if (choice !== null && items[choice]) {
-                riggedTarget = parseInt(choice);
-                alert(`Spinner rigged to: ${items[riggedTarget]}`);
+        
+        // Event Listeners
+        addBtn.addEventListener('click', () => {
+            const value = valueInput.value.trim();
+            if (value) {
+                addValue(value);
+                valueInput.value = '';
+                valueInput.focus();
             }
         });
-
-        function spinWheel() {
-            const spinBtn = document.getElementById('spin-btn');
-            spinBtn.disabled = true;
-
-            const extraSpins = 5 + Math.random() * 5; // 5-10 full rotations
-            const sliceAngle = 360 / items.length;
-            
-            let targetDegree;
-
-            if (riggedTarget !== null) {
-                // Calculate degree to land on rigged index
-                // Note: Canvas draws 0 degrees at 3 o'clock, pointer is at 12 o'clock (270 deg)
-                const targetOffset = (riggedTarget * sliceAngle) + (sliceAngle / 2);
-                targetDegree = 270 - targetOffset; 
-                riggedTarget = null; // Reset after one use
-            } else {
-                targetDegree = Math.random() * 360;
+        
+        valueInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addBtn.click();
             }
-
-            const totalRotation = currentRotation + (extraSpins * 360) + targetDegree;
+        });
+        
+        spinBtn.addEventListener('click', spinWheel);
+        clearBtn.addEventListener('click', clearAllValues);
+        aboutBtn.addEventListener('click', () => {
+            updateModalValues();
+            aboutModal.style.display = 'flex';
+        });
+        
+        closeModal.addEventListener('click', () => {
+            aboutModal.style.display = 'none';
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === aboutModal) {
+                aboutModal.style.display = 'none';
+            }
+        });
+        
+        // Functions
+        function addValue(value) {
+            // Check if value already exists
+            if (values.includes(value)) {
+                alert(`"${value}" is already in the spinner.`);
+                return;
+            }
             
-            canvas.style.transition = "transform 4s cubic-bezier(0.15, 0, 0.15, 1)";
-            canvas.style.transform = `rotate(${totalRotation}deg)`;
-
-            currentRotation = totalRotation;
-
-            setTimeout(() => {
+            values.push(value);
+            updateValuesDisplay();
+            updateSpinnerWheel();
+            updateModalValues();
+            
+            // If this is the first value added, enable the spin button
+            if (values.length === 1) {
                 spinBtn.disabled = false;
-            }, 4000);
+            }
         }
-
-        drawWheel();
-    </script>
-</body>
-</html>
+        
+        function removeValue(value) {
+            const index = values.indexOf(value);
+            if (index > -1) {
+                values.splice(index, 1);
+                
+                // If the removed value was selected, clear the selection
+                if (selectedValue === value) {
+                    selectedValue = null;
+                    updateSelectionInfo();
+                    updateModalValues();
+                }
+                
+                updateValuesDisplay();
+                updateSpinnerWheel();
+                
+                // Disable spin button if no values left
+                if (values.length === 0) {
+                    spinBtn.disabled = true;
+                }
+            }
+        }
+        
+        function updateValuesDisplay() {
+            valuesContainer.innerHTML = '';
+            
+            values.forEach(value => {
+                const li = document.createElement('li');
+                li.className = 'value-item';
+                if (value === selectedValue) {
+                    li.classList.add('selected');
+                }
+                
+                li.innerHTML = `
+                    ${value}
+                    <button class="remove-btn" data-value="${value}">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                valuesContainer.appendChild(li);
+            })
